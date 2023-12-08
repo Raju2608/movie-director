@@ -18,7 +18,7 @@ const initializeDbAndServer = async (request, response) =>{
     try{
         database = await open ({
             filename: databasePath,
-            driver: sqlite3;
+            driver: sqlite3.Database,
         });
         app.listen(30000, () =>
           console.log("Server Running at http://localhost:3000/")
@@ -31,7 +31,7 @@ const initializeDbAndServer = async (request, response) =>{
 
 initializeDbAndServer();
 
-const convertMovieObjectToResponseObject = (dbObject) =>{
+const convertMovieDbObjectToResponseObject = (dbObject) =>{
     return {
         movieId: dbObject.movie_id,
         directorId: dbObject.director_id,
@@ -40,7 +40,7 @@ const convertMovieObjectToResponseObject = (dbObject) =>{
     };
 };
 
-const convertDirectorObjectToResponseOnject = (dbObject) =>{
+const convertDirectorDbObjectToResponseOnject = (dbObject) =>{
     return {
         directorId: dbObject.director_id,
         directorName: dbObject.director_name,
@@ -76,7 +76,7 @@ app.get("/movies/:movieId/", async (request, response) => {
 });
 
 app.post("/movies/", async (request, response) => {
-    cosnt {directorId, movieName, leadActor} = request.body;
+    const {directorId, movieName, leadActor} = request.body;
 
     const postMovieQuery = `
     INSERT INTO
@@ -126,10 +126,10 @@ app.get("/directors/", async(request, response) => {
     FROM
       director;`;
 
-    cosnt directorsArray = await database.all(getDirectorsQuery);
+    const moviesArray = await database.all(getDirectorsQuery);
 
     response.send(
-        directorsArray.map((eachDirector) =>
+        moviesArray.map((eachDirector) =>
           convertDirectorDbObjectToResponseObject(eachDirector)
         )
     );
